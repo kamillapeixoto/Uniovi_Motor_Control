@@ -4,7 +4,6 @@
 
 clc 
 clear all
-close all
 
 global diametro masa rozamiento reduccion bateria Ts;
 
@@ -60,7 +59,7 @@ fuerza = lsim(c2d(tf(fuerza_filt,[ 1 fuerza_filt])*VelToFuerza, Ts), velocidad, 
 velocidad_rpm = 60*velocidad/(pi*diametro*reduccion);
 
 %Filtrada
-velocidad_rpm_filt = lsim(c2d(vel_filt, Ts), velocidad_rpm, Ttot);
+velocidad_rpm_filt = lsim(vel_filt, velocidad_rpm, Ttot);
 
 
 %% c. Velocidad lineal del vehículo (km/h)
@@ -69,7 +68,8 @@ velocidad_rpm_filt = lsim(c2d(vel_filt, Ts), velocidad_rpm, Ttot);
 velocidad_kmh = 3.6*velocidad;
 
 %Filtrada
-velocidad_kmh_filt = lsim(c2d(vel_filt, Ts), velocidad_kmh, Ttot);
+velocidad_kmh_filt = lsim(vel_filt, velocidad_kmh, Ttot);
+%El filtro 
 
 
 %% d. Desplazamiento del vehículo (m)
@@ -77,8 +77,7 @@ velocidad_kmh_filt = lsim(c2d(vel_filt, Ts), velocidad_kmh, Ttot);
 desplazamiento = cumtrapz(velocidad); % "Integra" la velocidad
 
 %% e. Potencia consumida por el motor (W)
-    % No tiene sentido plotar los valores que no están filtrados, pues hay
-    % perdidas significativas de informacion, pero se puede filtrar más
+    %No tiene sentido plotar los valores que no están filtrados, pues hay perdidas significativas de informacion
 par = fuerza*reduccion; 
 potencia = par.*velocidad;
 
