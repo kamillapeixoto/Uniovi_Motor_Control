@@ -25,18 +25,25 @@ Ttot = 0:Ts:(Ts*(length(velocidad)-1));
 % Define la funcion de transferencia
 FuerzaToVel = tf([1],[masa rozamiento]); % Es necesario discretizar la FT??
 
+% Calcula la transformada de Fourrier para saber donde poner el polo
+        vel_dft = fft(velocidad);
+        vel_dft_abs = abs(vel_dft);
+        vel_dft_freq = (0:length(vel_dft)-1)*100/length(vel_dft); 
+        plot(vel_dft_freq, vel_dft_abs);
+        
 % Calcula la inversa y añade un polo bien distante para que sea causal
 % sin que altere su comportamiento
-pol_dist = 1000000;
+
+pol_dist = 0.8;
 VelToFuerza = tf(pol_dist, [1 pol_dist])*inv(FuerzaToVel); 
 
 % aplica la entrada de velocidad
-fuerza = lsim(VelToFuerza, velocidad, Ttot);
+fuerza = lsim(c2d(VelToFuerza, Ts), velocidad, Ttot);
 
 
 %Verifica si la metodologia está correcta comparando las velocidades
 
-velocidad_sim = lsim(FuerzaToVel, fuerza, Ttot);
+velocidad_sim = lsim(c2d(FuerzaToVel, Ts), fuerza, Ttot);
 figure()
 plot(velocidad);
 hold on
