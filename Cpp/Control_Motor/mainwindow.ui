@@ -90,7 +90,7 @@
      <rect>
       <x>250</x>
       <y>10</y>
-      <width>111</width>
+      <width>181</width>
       <height>18</height>
      </rect>
     </property>
@@ -263,8 +263,11 @@
       <height>22</height>
      </rect>
     </property>
+    <property name="decimals">
+     <number>3</number>
+    </property>
     <property name="value">
-     <double>0.010000000000000</double>
+     <double>0.015000000000000</double>
     </property>
    </widget>
    <widget class="QDoubleSpinBox" name="ui_doubleSpinBox_rendimiento">

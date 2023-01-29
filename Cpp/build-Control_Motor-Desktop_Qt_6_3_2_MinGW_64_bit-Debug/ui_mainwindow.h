@@ -90,7 +90,7 @@ public:
         ui_lineEdit_salida->setGeometry(QRect(110, 170, 113, 20));
         ui_checkBox_param = new QCheckBox(centralwidget);
         ui_checkBox_param->setObjectName(QString::fromUtf8("ui_checkBox_param"));
-        ui_checkBox_param->setGeometry(QRect(250, 10, 111, 18));
+        ui_checkBox_param->setGeometry(QRect(250, 10, 181, 18));
         label_3 = new QLabel(centralwidget);
         label_3->setObjectName(QString::fromUtf8("label_3"));
         label_3->setGeometry(QRect(280, 30, 37, 12));
@@ -135,7 +135,8 @@ public:
         ui_doubleSpinBox_ts = new QDoubleSpinBox(centralwidget);
         ui_doubleSpinBox_ts->setObjectName(QString::fromUtf8("ui_doubleSpinBox_ts"));
         ui_doubleSpinBox_ts->setGeometry(QRect(330, 180, 62, 22));
-        ui_doubleSpinBox_ts->setValue(0.010000000000000);
+        ui_doubleSpinBox_ts->setDecimals(3);
+        ui_doubleSpinBox_ts->setValue(0.015000000000000);
         ui_doubleSpinBox_rendimiento = new QDoubleSpinBox(centralwidget);
         ui_doubleSpinBox_rendimiento->setObjectName(QString::fromUtf8("ui_doubleSpinBox_rendimiento"));
         ui_doubleSpinBox_rendimiento->setGeometry(QRect(330, 210, 62, 22));
