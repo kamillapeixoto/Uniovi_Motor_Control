@@ -1,0 +1,6 @@
+<WheelDiam_mm>200.0</WheelDiam_mm>
+<Mass_Kg>25.0</Mass_Kg>
+<Friction_B_N__m_s>0.5</Friction_B_N__m_s>
+<Reduction>20.0</Reduction>
+<Voltage_V>24.0</Voltage_V>
+<Tm_ms>15</Tm_ms>

@@ -58,7 +58,8 @@ OBJECTS       = release/main.o \
 		release/qrc_qmake_qmake_qm_files.o \
 		release/moc_mainwindow.o
 
-DIST          = ../../v1.txt ..\Control_Motor\mainwindow.h ..\Control_Motor\main.cpp \
+DIST          = ../../v1.txt \
+		params_xml.xml ..\Control_Motor\mainwindow.h ..\Control_Motor\main.cpp \
 		..\Control_Motor\mainwindow.cpp
 QMAKE_TARGET  = Control_Motor
 DESTDIR        = release\ #avoid trailing-slash linebreak

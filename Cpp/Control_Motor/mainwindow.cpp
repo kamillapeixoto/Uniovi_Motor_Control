@@ -1,6 +1,37 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+float MainWindow::readXML(const QString str_xml, const QString tag_xml)
+{
+
+    QString open_tag = "<" + tag_xml + ">";
+    QString close_tag = "</" + tag_xml + ">";
+
+
+    // Indices de inicio y final de las tags
+    int tag_start = str_xml.indexOf(open_tag);
+    int tag_end = str_xml.indexOf(close_tag);
+
+    // Donde la tag de inicio termina
+    tag_start =tag_start + open_tag.length();
+
+    // Calcular el tamaño de la variable
+    int length_variable = tag_end - tag_start;
+
+    // Cortar solamente la parte interesante
+    QString valor_string = str_xml.mid(tag_start, length_variable);
+
+    // Limpiar los espacios extras
+    valor_string = valor_string.trimmed();
+
+    // Cambia para float
+    float valor_xml = valor_string.toFloat();
+
+    return valor_xml;
+
+
+}
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -25,7 +56,7 @@ void MainWindow::OnTimer()
 
     QTextStream in(&archivo_entrada);
        //if (!in.atEnd())
-      // {
+      //{
           line = in.readLine();
           QString line2 = archivo_entrada.readAll();
 
@@ -63,13 +94,6 @@ void MainWindow::OnTimer()
 }
 
 
-void MainWindow::on_ui_checkBox_param_clicked()
-{
-    //Parametros estandares cargados desde archivo xml
-
-
-}
-
 
 void MainWindow::on_ui_checkBox_pausa_stateChanged(int arg1)
 {
@@ -106,16 +130,21 @@ void MainWindow::on_ui_pushButton_start_clicked()
         // verifica el tipo de grafico deseado
         tipo = ui->comboBox->currentIndex();
 
+        //Actualiza los parametros baseados en la spinbox
+        diametro = ui->ui_doubleSpinBox_diametro->value();
+        masa = ui->ui_doubleSpinBox_masa->value();
+        rozamiento = ui->ui_doubleSpinBox_rozamiento->value();
+        reduccion = ui->ui_doubleSpinBox_reduccion->value();
+        bateria = ui->ui_doubleSpinBox_tension->value();
+        Ts =  ui->ui_doubleSpinBox_ts->value();
+        rendimiento = ui->ui_doubleSpinBox_rendimiento->value();
+
 
     }
     else
     {
         ui->ui_label_error->setText("Archivo no encontrado");
     }
-
-    //Actualiza los parametros baseados en la spinbox
-
-
 
 
 
@@ -138,11 +167,60 @@ void MainWindow::on_ui_checkBox_param_stateChanged(int arg1)
     if(ui->ui_checkBox_param->isChecked())
     {
     // Read XML File
+        //Parametros estandares cargados desde archivo xml
+      /*
+        QFile xml_file;
+        xml_file.setFileName("params_xml.xml");
 
-    // Actualiza y Bloquea los spinbox
+        bool filexml_ok = xml_file.open(QIODevice::ReadOnly);
+
+        QTextStream qtOut(stdout);
+
+        QTextStream in(&archivo_entrada);
+           while (!in.atEnd())
+          {
+              line = in.readLine();
+             // QString line2 = archivo_entrada.readAll();
+
+           }
+
+        qtOut <<"xml" << line <<"\n";
+        qtOut.flush();
+
+        */
+
+        // Solamente para testar mientras aprendo a leer el archivo
+        QString parametros = "   <WheelDiam_mm>200.0</WheelDiam_mm><Mass_Kg>25.0</Mass_Kg><Friction_B_N__m_s>0.5</Friction_B_N__m_s> <Reduction>20.0</Reduction> <Voltage_V>24.0</Voltage_V><Tm_ms>15</Tm_ms>";
+
+
+
+        diametro =  readXML(parametros, "WheelDiam_mm")/1000;
+        ui->ui_doubleSpinBox_diametro->setValue(diametro);
+
+        masa = readXML(parametros, "Mass_Kg");
+        ui->ui_doubleSpinBox_masa->setValue(masa);
+
+        rozamiento = readXML(parametros, "Friction_B_N__m_s");
+        ui->ui_doubleSpinBox_rozamiento->setValue(rozamiento);
+
+        reduccion = 1/readXML(parametros, "Reduction");
+        ui->ui_doubleSpinBox_reduccion->setValue(reduccion);
+
+        bateria = readXML(parametros, "Voltage_V");
+        ui->ui_doubleSpinBox_tension->setValue(bateria);
+
+        Ts = readXML(parametros, "Tm_ms")/1000;
+        ui->ui_doubleSpinBox_ts->setValue(Ts);
+
+        rendimiento = 1;
+        ui->ui_doubleSpinBox_rendimiento->setValue(rendimiento);
+
+
+    // Actualiza y Bloquea las spinbox
+
+    } else{
+        // Desbloquea las spinbox
     }
-
-
 
 }
 

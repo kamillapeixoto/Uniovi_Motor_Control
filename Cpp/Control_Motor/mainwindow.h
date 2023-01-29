@@ -33,6 +33,9 @@ private:
     //Parametros del motor
     float diametro, masa, rozamiento, reduccion, bateria, Ts, rendimiento;
 
+    //Funcion para leer datos XML
+    float readXML(const QString xml_str, const QString xml_tag);
+
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -41,8 +44,6 @@ public:
 private slots:
 
     void OnTimer();
-
-    void on_ui_checkBox_param_clicked();
 
     void on_ui_checkBox_pausa_stateChanged(int arg1);
 

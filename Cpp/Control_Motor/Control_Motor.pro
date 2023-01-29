@@ -29,4 +29,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    ../../v1.txt
+    ../../v1.txt \
+    params_xml.xml
