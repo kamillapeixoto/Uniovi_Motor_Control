@@ -39,10 +39,13 @@ pol_filt = 0.8;
 vel_filt = tf(pol_filt, [1 pol_filt]);
 VelToFuerza = vel_filt*inv(FuerzaToVel); 
 
+%Filtra y Discretiza
+fuerza_filt = 1;
+VelToFuerza_filt_d = c2d(tf(fuerza_filt,[ 1 fuerza_filt])*VelToFuerza, Ts);
+
 % Aplica la entrada de velocidad en la funcion de transferencia
 % discretizada y filtrada
-fuerza_filt = 1;
-fuerza = lsim(c2d(tf(fuerza_filt,[ 1 fuerza_filt])*VelToFuerza, Ts), velocidad, Ttot);
+fuerza = lsim(VelToFuerza_filt_d, velocidad, Ttot);
 
 
 %Verifica si la metodologia está correcta comparando las velocidades
@@ -101,6 +104,7 @@ menu_opt = ["a. Fuerza de empuje de la rueda (N)",
 
 menu_on = 1;
 plotar = velocidad;
+ytitle = "";
 plotar2 = [];
 
 while (menu_on)
@@ -148,3 +152,111 @@ while (menu_on)
 end
 
 close all
+
+%% Parte 3 - Simulink
+
+% Entrada: Velocidad
+% Salida: Par
+
+% Funcion de transferencia discretizada
+VelToFuerzaD = c2d(VelToFuerza, Ts);
+
+%% Mejoras
+
+% 1) Obtener la FFT de la señal muestreada; identificando los armónicos del ruido
+N = length(velocidad);
+vel_fft_tot = fft(velocidad);
+
+% Rechaza la mitad superior
+vel_fft = vel_fft_tot(1:N/2+1);
+
+% Normaliza la magnitude
+vel_fft_nor = vel_fft/(N/2);
+
+%Normaliza el primero que se queda duplicado
+vel_fft_nor(1) = vel_fft_nor(1)/2;
+
+% Calcula la magnitude
+vel_fft_nor_abs = abs(vel_fft_nor);
+
+% Define vector de frecuencias
+vecfrec2 = (0:1:N-1)/(N*Ts);
+vecfrec = vecfrec2(1:N/2+1);
+
+figure()
+subplot(211);
+plot(vecfrec,vel_fft_nor_abs, 'LineWidth',1);
+grid on
+axis([-1 vecfrec(end) vel_fft_nor_abs(end)-0.1 vel_fft_nor_abs(1)+1]);
+title('FFT de la señal de velocidad muestrada');
+ylabel('Magnitud lineal');
+xlabel('Frecuencia (kHz, lineal)');
+
+subplot(212);
+loglog(vecfrec,vel_fft_nor_abs, 'LineWidth',1);
+grid on
+axis([-1 vecfrec(end) 1e-4 10]);
+ylabel('Magnitud log.');
+xlabel('Frecuencia (Hz, log)');
+
+% Conclusiones: ruido con frecuencias = [13 23 30.98] Khz
+ruido_frec = [13 23 30.98];
+
+%% 2) Diseñar e implementar en Matlab un filtro paso bajo para eliminar dicho ruido, eligiendo una de estas dos opciones (solo una!). Es necesario explicar brevemente el criterio elegido para seleccionar la frecuencia de corte del filtro, y comentar el resultado de aplicar el filtro.
+    % a. Filtro de primero orden (0.5 puntos)
+        % Ya fue implementado en la parte 1
+
+    % b. Filtro de Butterworth de segundo orden (1 punto)
+
+n = 2; %Filtro de segundo orden
+fc   =ruido_frec(1)/2; % Frecuencia de corte
+Wn = fc/vecfrec(end);  % Normaliza
+[b,a] = butter(n,Wn);
+vel_butter = lsim(tf(b, a, Ts), velocidad, Ttot);
+
+%% 3) Implementar dicho filtro en Matlab. Representar tanto en el tiempo como 
+% en frecuencia (FFT) las señales sin filtrar y las filtradas
+
+%Compara respuesta en el tiempo
+figure()
+subplot(211);
+plot(Ttot, velocidad)
+hold on
+plot(Ttot, vel_butter)
+legend ('Original', "Filtrada")
+title('FFT de la señal de velocidad muestrada');
+ylabel('Velocidad lineal');
+
+%Compara respuesta en frecuencia
+
+subplot(212);
+plot(vecfrec,vel_fft_nor_abs, 'LineWidth',1.5);
+grid on
+axis([-1 vecfrec(end) vel_fft_nor_abs(end)-0.1 vel_fft_nor_abs(1)+1]);
+hold on
+
+
+vel_fft_tot_but = fft(vel_butter);
+
+% Rechaza la mitad superior
+vel_fft_but = vel_fft_tot_but(1:N/2+1);
+
+% Normaliza la magnitude
+vel_fft_nor_but = vel_fft_but/(N/2);
+
+%Normaliza el primero que se queda duplicado
+vel_fft_nor_but(1) = vel_fft_nor_but(1)/2;
+
+% Calcula la magnitude
+vel_fft_nor_abs_but = abs(vel_fft_nor_but);
+
+% Define vector de frecuencias
+vecfrec2_but = (0:1:N-1)/(N*Ts);
+vecfrec_but = vecfrec2_but(1:N/2+1);
+
+hold on
+plot(vecfrec_but,vel_fft_nor_abs_but, '--', 'LineWidth',1.5);
+legend ('Original', "Filtrada")
+ylabel('Magnitud lineal');
+xlabel('Frecuencia (kHz, lineal)');
+
